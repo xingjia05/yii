@@ -221,7 +221,7 @@ class ImageController extends Controller {
         if ($watermark) {
 //            $errstr = imageWaterMark($resultstring . $fileName, $waterPos, $waterImage, $waterText, $watertextFont, $watertextColor);
         }
-        $this->HandleError("suc:" . $resultstring . "," . $fileName . "," . $file_size);
+        $this->HandleError(array('image' => $resultstring . "/" . $fileName));
         exit(0);
     }
 
