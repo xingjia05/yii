@@ -30,55 +30,21 @@ class GovernmentController extends BaseController
             ],
         ];
     }
-
-    public function actionAdd_news()
-    {
-        $newsAddService = new NewsAdd();
-        $params = Yii::$app->request->post();
-        $ret = $newsAddService->add($params);
-        if (empty($ret)) {
-            $this->setError(1, '新增失败');
-            return;
-        }
-        return ['news_id' => $ret];
-    }
-    
-    public function actionUpdate_news()
-    {
-        $newsAddService = new NewsAdd();
-        $params = Yii::$app->request->post();
-        if (empty($params['news_id'])) {
-            $this->setError(1, '参数错误');
-            return;
-        }
-        $ret = $newsAddService->update($params);
-        if (empty($ret)) {
-            $this->setError(1, '更新失败');
-            return;
-        }
-        return ['news_id' => $params['news_id']];
-    }
     
     public function actionNews_list()
     {
+        $params = Yii::$app->request->get();
+        $params['page'] = !empty($params['page']) ? $params['page'] : 1;
+        $params['size'] = !empty($params['size']) ? $params['size'] : 10;
         $newsAddService = new NewsAdd();
-        return $newsAddService->getList();
+        return $newsAddService->getList($params['page'], $params['size']);
     }
     
-    public function actionDelete_news()
+    public function actionNews_info()
     {
+        $params = Yii::$app->request->get();
         $newsAddService = new NewsAdd();
-        $params = Yii::$app->request->post();
-        if (empty($params['news_id'])) {
-            $this->setError(1, '参数错误');
-            return;
-        }
-        $ret = $newsAddService->delete($params['news_id']);
-        if (empty($ret)) {
-            $this->setError(1, '删除失败');
-            return;
-        }
-        return ['news_id' => $params['news_id']];
+        return $newsAddService->getInfo($params['news_id']);
     }
 }
 

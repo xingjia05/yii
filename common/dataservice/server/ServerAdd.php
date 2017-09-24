@@ -43,7 +43,7 @@ class ServerAdd extends BaseService
             'list' => array()
         );
         $serverModel = new Server();
-        $list = $serverModel->getList();
+        $list = $serverModel->getList(0, 100, array(Server::STATUS_ON, Server::STATUS_OFF, Server::STATUS_DEFAULT));
         if (empty($list)) {
             return $result;
         }
@@ -54,7 +54,8 @@ class ServerAdd extends BaseService
                 'phone'       => $value['phone'],
                 'serve_count' => Maintaince::getCountByServer($value['id']),
                 'entry_time'  => $value['entry_time'],
-                'status'      => isset(self::$status[$value['status']]) ? self::$status[$value['status']] : '未知',
+                'status'      => $value['status'],
+                'status_str'  => isset(self::$status[$value['status']]) ? self::$status[$value['status']] : '未知',
             );
         }
         return $result;

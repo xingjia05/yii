@@ -4,6 +4,7 @@ namespace common\dataservice\maintaince;
 
 use common\dataservice\BaseService;
 use common\models\Maintaince;
+use common\models\Server;
 
 class MaintainceAdd extends BaseService
 {
@@ -25,6 +26,10 @@ class MaintainceAdd extends BaseService
     }
     
     public function update($data) {
+        if (isset($data['server_id'])) {
+            $serverDb = Server::findById($data['server_id']);
+            $data['server_name'] = isset($serverDb['name']) ? $serverDb['name'] : '';
+        }
         $maintaince = new Maintaince();
         $oldData = $maintaince::findById($data['maintaince_id']);
         $sqlData = array();
@@ -36,12 +41,21 @@ class MaintainceAdd extends BaseService
         return $maintaince->edit($data['maintaince_id'], $sqlData);
     }
     
-    public function getList() {
+    public function getList($page = 1, $size = 10) {
         $result = array(
-            'list' => array()
+            'list' => array(),
+            'page_info' => array(
+                'size' => $size,
+                'total_size' => $size,
+                'current_page' => $page,
+                'total_page' => $page,
+            )
         );
         $maintaince = new Maintaince();
-        $list = $maintaince->getList();
+        $list = $maintaince->getList($page, $size);
+        $count = $maintaince->getCount();
+        $result['page_info']['total_size'] = $count;
+        $result['page_info']['total_page'] = ceil($count/$size);
         if (empty($list)) {
             return $result;
         }
@@ -52,7 +66,8 @@ class MaintainceAdd extends BaseService
                 'phone'       => $value['phone'],
                 'address'     => $value['address'],
                 'time'        => $value['time'],
-                'status'      => isset(self::$status[$value['status']]) ? self::$status[$value['status']] : '未知',
+                'status'      => $value['status'],
+                'status_name' => isset(self::$status[$value['status']]) ? self::$status[$value['status']] : '未知',
                 'server_name' => $value['server_name'],
                 'server_id'   => $value['server_id'],
             );

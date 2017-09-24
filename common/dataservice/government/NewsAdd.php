@@ -31,21 +31,33 @@ class NewsAdd extends BaseService
         return $governmentNewsModel->edit($data['news_id'], $sqlData);
     }
     
-    public function getList() {
+    public function getList($page, $size) {
         $result = array(
-            'list' => array()
+            'list' => array(),
+            'page_info' => array(
+                'size' => $size,
+                'total_size' => $size,
+                'current_page' => $page,
+                'total_page' => $page,
+            )
         );
         $governmentNewsModel = new GovernmentNews();
-        $list = $governmentNewsModel->getList();
+        $list = $governmentNewsModel->getList(($page-1)*$size, $size);
+        $count = $governmentNewsModel->getCount();
+        $result['page_info']['total_size'] = $count;
+        $result['page_info']['total_page'] = ceil($count/$size);
         if (empty($list)) {
             return $result;
         }
         foreach ($list as $value) {
             $result['list'][] = array(
-                'news_id'    => $value['id'],
-                'news_title' => $value['news_title'],
-                'issuer'     => $value['issuer'],
-                'time'       => $value['create_time'],
+                'news_id'     => $value['id'],
+                'news_title'  => $value['news_title'],
+                'issuer'      => $value['issuer'],
+                'content'     => $value['content'],
+                'time'        => $value['create_time'],
+                'image'       => $value['image'],
+                'create_time' => $value['create_time'],
             );
         }
         return $result;
@@ -57,5 +69,18 @@ class NewsAdd extends BaseService
         );
         $governmentNewsModel = new GovernmentNews();
         return $governmentNewsModel->edit($newsId, $sqlData);
+    }
+    
+    public function getInfo($newsId) {
+        $governmentNewsModel = new GovernmentNews();
+        $dbData = $governmentNewsModel::findById($newsId);
+        return array(
+            'news_id' => $dbData['id'],
+            'news_title' => $dbData['news_title'],
+            'issuer' => $dbData['issuer'],
+            'image' => $dbData['image'],
+            'content' => $dbData['content'],
+            'create_time' => $dbData['create_time'],
+        );
     }
 }

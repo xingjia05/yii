@@ -1,45 +1,29 @@
 <?php
 
-namespace frontend\controllers;
+namespace backend\controllers;
 
-use yii\web\Controller;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
+use yii;
+
+header('content-type:application:json;charset=utf8');  
+header('Access-Control-Allow-Origin:*');  
+header('Access-Control-Allow-Methods:POST');  
+header('Access-Control-Allow-Headers:x-requested-with,content-type');  
 
 /**
  * Image controller
  */
-class ImageController extends Controller {
+class ImageController extends BaseController {
 
     public $enableCsrfValidation = false;
+    
+    public static $imagePrefix = 'http://47.93.188.93:8081/';
     
     /**
      * @inheritdoc
      */
     public function behaviors() {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['logout', 'signup'],
-                'rules' => [
-                    [
-                        'actions' => ['signup'],
-                        'allow' => true,
-                        'roles' => ['?'],
-                    ],
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
+            
         ];
     }
 
@@ -62,6 +46,7 @@ class ImageController extends Controller {
      * upload image.
      */
     public function actionUpload() {
+        file_put_contents('/tmp/11.log', json_encode($_FILES).date('Y-m-d H:i:s'));
         //检验post的最大上传的大小
         $POST_MAX_SIZE = ini_get('post_max_size');
         $unit = strtoupper(substr($POST_MAX_SIZE, -1));
@@ -79,12 +64,12 @@ class ImageController extends Controller {
         $upbool = 1;          //设置是否开始上传功能。0为关闭上传，其他为正常上传
         $tipmsg = "为节省空间暂时关闭演示程序上传功能，如有不周之处，还请原谅"; //设置关闭上传返回的信息
         $dir_file = date("Ymd"); //获取当前时间
-        $imgpath  = "upload/image/";  //图片保存的路径,其格式必须如此
-//        $imgpath  = "image/";  //图片保存的路径,其格式必须如此
+//        $imgpath  = "upload/image/";  //图片保存的路径,其格式必须如此
+        $imgpath  = "";  //图片保存的路径,其格式必须如此
         $rootfoldername = "null";   //如果你把整个文件夹(upfile)放到你网站中的话就无需更改此配置，如果你把upfile文件夹下文件和文件夹放到网站中请填写为:null 。例如：$rootfoldername="null".如果你更改了整个文件夹(upfile)的名称，请改为你更改的名称。
-        $save_path      = getcwd() . '/' . $imgpath . $dir_file . '/';    // 保存的路径
-//        $save_path      = '/home/workroot' . '/' . $imgpath . $dir_file . '/';    // 保存的路径;
-        $upload_name    = "Filedata";
+//        $save_path      = getcwd() . '/' . $imgpath . $dir_file . '/';    // 保存的路径
+        $save_path      = '/home/workroot/image' . '/' . $dir_file . '/';    // 保存的路径;
+        $upload_name    = "files";
         $max_file_size_in_bytes = 2147483647; //2GB in bytes 最大上传的文件大小为2G
         $extension_whitelist = array("jpg", "jpeg", "gif", "png", "bmp"); // 上传允许的文件扩展名称
         $valid_chars_regex = '.A-Z0-9_ !@#$%^&()+={}\[\]\',~`-'; //允许在文件名字符(在一个正则表达式格式)
@@ -119,7 +104,6 @@ class ImageController extends Controller {
             $this->HandleError("fai:" . $tipmsg);
             exit(0);
         }
-        
         /* 验证上传  */
         if (!isset($_FILES[$upload_name])) {
             $this->HandleError("fai:没有发现上传 \$_FILES for " . $upload_name);
@@ -140,7 +124,6 @@ class ImageController extends Controller {
             $this->HandleError("fai:上传图片为非法内容");
             exit(0);
         }
-
         /* 验证这个文件的大小(警告:最大的文件支持这个代码2 GB) */
         $file_size = @filesize($_FILES[$upload_name]["tmp_name"]);
         if (!$file_size || $file_size > $max_file_size_in_bytes) {
@@ -185,7 +168,6 @@ class ImageController extends Controller {
             $this->HandleError("fai:无效的扩展名");
             exit(0);
         }
-        
         $resultstring = "";
         if (is_dir($save_path)) {
             $fileName = $filenameset ? $this->createdatefilename($file_extension) : $this->CreateNextName($file_extension, $save_path);
@@ -217,16 +199,14 @@ class ImageController extends Controller {
                 exit(0);
             }
         }
-        $errstr = null;
         if ($watermark) {
 //            $errstr = imageWaterMark($resultstring . $fileName, $waterPos, $waterImage, $waterText, $watertextFont, $watertextColor);
         }
-        $this->HandleError(array('image' => $resultstring . "/" . $fileName));
-        exit(0);
+        return array('image' => self::$imagePrefix . $resultstring . "/" . $fileName);
     }
 
     function HandleError($message) {
-        echo trim($message);
+	echo trim($message);
     }
 
     //参数是文件的扩展名称

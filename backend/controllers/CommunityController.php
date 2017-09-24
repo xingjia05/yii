@@ -1,10 +1,13 @@
 <?php
-namespace frontend\controllers;
+namespace backend\controllers;
 
 use Yii;
-use common\dataservice\maintaince\MaintainceAdd;
+use common\dataservice\community\CommunityList;
 
-class MaintainceController extends BaseController
+/**
+ * Community controller
+ */
+class CommunityController extends BaseController
 {
     /**
      * @inheritdoc
@@ -31,17 +34,9 @@ class MaintainceController extends BaseController
         ];
     }
 
-    public function actionAdd()
+    public function actionList()
     {
-        $maintainceService = new MaintainceAdd();
-        $params = Yii::$app->request->post();
-        $ret = $maintainceService->add($params);
-        if (empty($ret)) {
-            $this->setError(1, '新增失败');
-            return;
-        }
-        return ['maintaince_id' => $ret];
+        $communityService = new CommunityList();
+        return $communityService->getList();
     }
-    
 }
-

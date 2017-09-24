@@ -31,6 +31,13 @@ class Maintaince extends ActiveRecord
         return $res;
     }
 
+    public function getCount()
+    {
+        $where = array();
+        $res =  static::find()->select(['*'])->where($where)->orderBy('')->count();
+        return $res;
+    }
+    
     public function add($data)
     {
         foreach ($data as $key => $value) {

@@ -24,6 +24,9 @@ return [
         'session' => [
             // this is the name of the session cookie used for login on the backend
             'name' => 'advanced-backend',
+            'class' => 'yii\web\DbSession',// 使用的session存储组件类
+            'sessionTable'  => '{{%session}}',// session表名
+            // this is the name of the session cookie used for login on the frontend
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,

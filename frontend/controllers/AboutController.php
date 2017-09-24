@@ -2,9 +2,9 @@
 namespace frontend\controllers;
 
 use Yii;
-use common\dataservice\maintaince\MaintainceAdd;
+use common\dataservice\about\Content;
 
-class MaintainceController extends BaseController
+class AboutController extends BaseController
 {
     /**
      * @inheritdoc
@@ -31,16 +31,10 @@ class MaintainceController extends BaseController
         ];
     }
 
-    public function actionAdd()
+    public function actionIndex()
     {
-        $maintainceService = new MaintainceAdd();
-        $params = Yii::$app->request->post();
-        $ret = $maintainceService->add($params);
-        if (empty($ret)) {
-            $this->setError(1, '新增失败');
-            return;
-        }
-        return ['maintaince_id' => $ret];
+        $content = new Content();
+        return $content->brief();
     }
     
 }

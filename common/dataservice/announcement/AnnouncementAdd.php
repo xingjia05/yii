@@ -31,12 +31,21 @@ class AnnouncementAdd extends BaseService
         return $announcementModel->edit($data['announcement_id'], $sqlData);
     }
     
-    public function getList() {
+    public function getList($page, $size) {
         $result = array(
-            'list' => array()
+            'list' => array(),
+            'page_info' => array(
+                'size' => $size,
+                'total_size' => $size,
+                'current_page' => $page,
+                'total_page' => $page,
+            )
         );
         $announcementModel = new Announcement();
-        $list = $announcementModel->getList();
+        $list = $announcementModel->getList(($page-1)*$size, $size);
+        $count = $announcementModel->getCount();
+        $result['page_info']['total_size'] = $count;
+        $result['page_info']['total_page'] = ceil($count/$size);
         if (empty($list)) {
             return $result;
         }
@@ -46,6 +55,8 @@ class AnnouncementAdd extends BaseService
                 'announcement_title' => $value['announcement_title'],
                 'issuer'             => $value['issuer'],
                 'time'               => $value['create_time'],
+                'image'              => $value['image'],
+                'content'            => $value['content'],
             );
         }
         return $result;
@@ -57,5 +68,18 @@ class AnnouncementAdd extends BaseService
         );
         $announcementModel = new Announcement();
         return $announcementModel->edit($announcementId, $sqlData);
+    }
+    
+    public function getInfo($newsId) {
+        $announcementModel = new Announcement();
+        $dbData = $announcementModel::findById($newsId);
+        return array(
+            'announcement_id' => $dbData['id'],
+            'announcement_title' => $dbData['announcement_title'],
+            'issuer' => $dbData['issuer'],
+            'image' => $dbData['image'],
+            'content' => $dbData['content'],
+            'create_time' => $dbData['create_time'],
+        );
     }
 }

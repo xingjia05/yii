@@ -34,6 +34,13 @@ class GovernmentNews extends ActiveRecord
         return $res;
     }
 
+    public function getCount()
+    {
+        $where = array('is_deleted' => self::IS_DELETED_NO);
+        $res =  static::find()->select(['*'])->where($where)->orderBy('')->asArray()->count();
+        return $res;
+    }
+    
     public function add($data)
     {
         foreach ($data as $key => $value) {

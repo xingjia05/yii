@@ -4,11 +4,10 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 
-class Server extends ActiveRecord
+class Member extends ActiveRecord
 {
-    const STATUS_DEFAULT = 0;
-    const STATUS_ON      = 1;
-    const STATUS_OFF     = 2;
+    const IS_DELETED_YES = 1;
+    const IS_DELETED_NO  = 0;
     
     /**
      * 数据库表名
@@ -16,7 +15,7 @@ class Server extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'server';
+        return 'member';
     }
 
     /**
@@ -28,13 +27,20 @@ class Server extends ActiveRecord
         return Yii::$app->db;
     }
 
-    public function getList($offset = 0, $limit = 10, $status = self::STATUS_ON)
+    public function getList($offset = 0, $limit = 10)
     {
-        $where = array('status' => $status);
+        $where = array('is_deleted' => self::IS_DELETED_NO);
         $res =  static::find()->select(['*'])->where($where)->orderBy('')->limit($limit)->offset($offset)->asArray()->all();
         return $res;
     }
 
+    public function getCount()
+    {
+        $where = array('is_deleted' => self::IS_DELETED_NO);
+        $res =  static::find()->select(['*'])->where($where)->orderBy('')->asArray()->count();
+        return $res;
+    }
+    
     public function add($data)
     {
         foreach ($data as $key => $value) {
@@ -52,6 +58,12 @@ class Server extends ActiveRecord
     {
         $where = array('id' => $id);
         return static::find()->select(['*'])->where($where)->orderBy('')->asArray()->one();
+    }
+    
+    public static function getCountByServer($serverId)
+    {
+        $where = array('server_id' => $serverId);
+        return static::find()->select(['*'])->where($where)->orderBy('')->asArray()->count();
     }
     
     public function edit($id, $data)
