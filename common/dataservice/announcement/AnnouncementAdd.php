@@ -8,6 +8,8 @@ use common\models\Announcement;
 class AnnouncementAdd extends BaseService
 {
     
+    public static $defaultImage = 'http://47.93.188.93:8081/20171015//101500280813.jpg';
+    
     public function add($data) {
         $announcementModel = new Announcement();
         $sqlData = array(
@@ -55,7 +57,7 @@ class AnnouncementAdd extends BaseService
                 'announcement_title' => $value['announcement_title'],
                 'issuer'             => $value['issuer'],
                 'time'               => $value['create_time'],
-                'image'              => $value['image'],
+                'image'              => !empty($value['image']) ? $value['image'] : self::$defaultImage,
                 'content'            => $value['content'],
             );
         }

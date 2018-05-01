@@ -3,6 +3,7 @@ namespace common\models;
 
 use Yii;
 use yii\base\Model;
+use common\models\Member;
 
 /**
  * Login form
@@ -14,7 +15,6 @@ class LoginForm extends Model
     public $rememberMe = true;
 
     private $_user;
-
 
     /**
      * @inheritdoc
@@ -68,6 +68,28 @@ class LoginForm extends Model
     }
 
     /**
+     * check user
+     *
+     * @return User|null
+     */
+    public function checkLogin()
+    {
+        if (Yii::$app->user->isGuest) {
+            $userInfo = $this->getUser();
+            if (empty($userInfo) || $userInfo['password'] != md5($this->password)) {
+                return FALSE;
+            }
+            $ret = Yii::$app->user->login($userInfo, $this->rememberMe ? 3600 * 24 * 30 : 0);
+            if ($ret) {
+                Yii::$app->session['session_data'] = $userInfo->attributes;
+            }
+            return $ret;
+        } else {
+            return true;
+        }
+    }
+    
+    /**
      * Finds user by [[username]]
      *
      * @return User|null
@@ -75,7 +97,7 @@ class LoginForm extends Model
     protected function getUser()
     {
         if ($this->_user === null) {
-            $this->_user = User::findByUsername($this->username);
+            $this->_user = Member::findByUsername($this->username);
         }
         return $this->_user;
     }

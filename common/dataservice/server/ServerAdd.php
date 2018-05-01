@@ -43,7 +43,7 @@ class ServerAdd extends BaseService
             'list' => array()
         );
         $serverModel = new Server();
-        $list = $serverModel->getList(0, 100, array(Server::STATUS_ON, Server::STATUS_OFF, Server::STATUS_DEFAULT));
+        $list = $serverModel->getList(0, 100, array(Server::STATUS_ON, Server::STATUS_DEFAULT));
         if (empty($list)) {
             return $result;
         }

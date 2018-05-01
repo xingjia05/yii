@@ -4,11 +4,10 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 
-class Server extends ActiveRecord
+class Live extends ActiveRecord
 {
-    const STATUS_DEFAULT = 0;
-    const STATUS_ON      = 1;
-    const STATUS_OFF     = 2;
+    const STATUS_VALID = 1;
+    const STATUS_INVALID = 2;
     
     /**
      * 数据库表名
@@ -16,7 +15,7 @@ class Server extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'server';
+        return 'live';
     }
 
     /**
@@ -28,24 +27,18 @@ class Server extends ActiveRecord
         return Yii::$app->db;
     }
 
-    public function getList($offset = 0, $limit = 10, $status = self::STATUS_ON)
+    public function getList($offset = 0, $limit = 10)
     {
-        $where = array('status' => $status);
+        $where = array('status' => self::STATUS_VALID);
         $res =  static::find()->select(['*'])->where($where)->orderBy('id DESC')->limit($limit)->offset($offset)->asArray()->all();
         return $res;
     }
 
-    public function add($data)
+    public function getCount()
     {
-        foreach ($data as $key => $value) {
-            $this->$key = $value;
-        }
-        try {
-            $this->save();
-        } catch (\Exception $e) {
-            return false;
-        }
-        return $this->primaryKey;
+        $where = array('status' => self::STATUS_INVALID);
+        $res =  static::find()->select(['*'])->where($where)->orderBy('')->asArray()->count();
+        return $res;
     }
     
     public static function findById($id)

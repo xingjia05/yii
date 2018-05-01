@@ -16,7 +16,7 @@ class ImageController extends BaseController {
 
     public $enableCsrfValidation = false;
     
-    public static $imagePrefix = 'http://47.93.188.93:8081/';
+    public static $imagePrefix = 'http://39.106.49.127:8081/';
     
     /**
      * @inheritdoc
@@ -68,7 +68,7 @@ class ImageController extends BaseController {
         $imgpath  = "";  //图片保存的路径,其格式必须如此
         $rootfoldername = "null";   //如果你把整个文件夹(upfile)放到你网站中的话就无需更改此配置，如果你把upfile文件夹下文件和文件夹放到网站中请填写为:null 。例如：$rootfoldername="null".如果你更改了整个文件夹(upfile)的名称，请改为你更改的名称。
 //        $save_path      = getcwd() . '/' . $imgpath . $dir_file . '/';    // 保存的路径
-        $save_path      = '/home/workroot/image' . '/' . $dir_file . '/';    // 保存的路径;
+        $save_path      = '/home/work/image' . '/' . $dir_file . '/';    // 保存的路径;
         $upload_name    = "files";
         $max_file_size_in_bytes = 2147483647; //2GB in bytes 最大上传的文件大小为2G
         $extension_whitelist = array("jpg", "jpeg", "gif", "png", "bmp"); // 上传允许的文件扩展名称
@@ -202,7 +202,7 @@ class ImageController extends BaseController {
         if ($watermark) {
 //            $errstr = imageWaterMark($resultstring . $fileName, $waterPos, $waterImage, $waterText, $watertextFont, $watertextColor);
         }
-        return array('image' => self::$imagePrefix . $resultstring . "/" . $fileName);
+        return array('image' => self::$imagePrefix . $resultstring . $fileName);
     }
 
     function HandleError($message) {

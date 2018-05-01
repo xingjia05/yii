@@ -8,6 +8,8 @@ use common\models\GovernmentNews;
 class NewsAdd extends BaseService
 {
     
+    public static $defaultImage = 'http://47.93.188.93:8081/20171015//101500280814.jpeg';
+    
     public function add($data) {
         $governmentNewsModel = new GovernmentNews();
         $sqlData = array(
@@ -56,7 +58,7 @@ class NewsAdd extends BaseService
                 'issuer'      => $value['issuer'],
                 'content'     => $value['content'],
                 'time'        => $value['create_time'],
-                'image'       => $value['image'],
+                'image'       => !empty($value['image']) ? $value['image'] : self::$defaultImage,
                 'create_time' => $value['create_time'],
             );
         }

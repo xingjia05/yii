@@ -52,7 +52,7 @@ class MaintainceAdd extends BaseService
             )
         );
         $maintaince = new Maintaince();
-        $list = $maintaince->getList($page, $size);
+        $list = $maintaince->getList(($page-1) * $size , $size);
         $count = $maintaince->getCount();
         $result['page_info']['total_size'] = $count;
         $result['page_info']['total_page'] = ceil($count/$size);

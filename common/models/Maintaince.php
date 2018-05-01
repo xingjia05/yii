@@ -27,7 +27,7 @@ class Maintaince extends ActiveRecord
     public function getList($offset = 0, $limit = 10)
     {
         $where = array();
-        $res =  static::find()->select(['*'])->where($where)->orderBy('')->limit($limit)->offset($offset)->asArray()->all();
+        $res =  static::find()->select(['*'])->where($where)->orderBy('id DESC')->limit($limit)->offset($offset)->asArray()->all();
         return $res;
     }
 
